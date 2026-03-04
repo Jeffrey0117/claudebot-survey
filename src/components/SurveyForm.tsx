@@ -49,7 +49,7 @@ const QUESTIONS: readonly Question[] = [
   },
   {
     id: 'subscribe',
-    label: '如果每月 $200 就能訂閱使用 Claude Code（遠端連線，直接體驗），你會有興趣嗎？',
+    label: '如果每月 $200 就能訂閱使用 Claude Code，直接上手體驗，你會有興趣嗎？',
     type: 'radio',
     options: ['非常有興趣', '會想試試看', '再觀望', '沒興趣'],
     required: true,
@@ -138,6 +138,7 @@ export default function SurveyForm({ onSubmit }: Props) {
               placeholder="@your_account"
               className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all"
             />
+            <p className="text-[11px] text-white/20 mt-1.5 pl-1">方便後續聯繫與私訊通知用</p>
           </div>
           <div>
             <label className="block text-xs text-white/30 mb-1.5">
@@ -150,6 +151,7 @@ export default function SurveyForm({ onSubmit }: Props) {
               placeholder="your@email.com"
               className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all"
             />
+            <p className="text-[11px] text-white/20 mt-1.5 pl-1">用於寄送折扣碼與課程上線通知</p>
           </div>
         </div>
       </div>
