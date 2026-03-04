@@ -48,17 +48,10 @@ const QUESTIONS: readonly Question[] = [
     required: true,
   },
   {
-    id: 'price',
-    label: '你覺得合理的課程價格區間？',
-    type: 'radio',
-    options: ['NT$ 500 以下', 'NT$ 500–1,000', 'NT$ 1,000–2,000', 'NT$ 2,000 以上'],
-    required: true,
-  },
-  {
     id: 'format',
     label: '你偏好的上課方式？',
     type: 'radio',
-    options: ['錄播影片', '直播教學', '圖文教程', '混合式（影片+文字）'],
+    options: ['錄播影片', '直播教學'],
     required: true,
   },
   {
@@ -69,11 +62,11 @@ const QUESTIONS: readonly Question[] = [
 ]
 
 interface Props {
-  readonly onSubmit: (data: { name: string; email: string; answers: Record<string, string | string[]> }) => Promise<void>
+  readonly onSubmit: (data: { threadsAccount: string; email: string; answers: Record<string, string | string[]> }) => Promise<void>
 }
 
 export default function SurveyForm({ onSubmit }: Props) {
-  const [name, setName] = useState('')
+  const [threadsAccount, setThreadsAccount] = useState('')
   const [email, setEmail] = useState('')
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -99,8 +92,8 @@ export default function SurveyForm({ onSubmit }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
-    if (!name.trim()) {
-      alert('請輸入你的姓名')
+    if (!threadsAccount.trim()) {
+      alert('請輸入你的 Threads 帳號')
       return
     }
 
@@ -121,7 +114,7 @@ export default function SurveyForm({ onSubmit }: Props) {
 
     setSubmitting(true)
     try {
-      await onSubmit({ name: name.trim(), email: email.trim().toLowerCase(), answers })
+      await onSubmit({ threadsAccount: threadsAccount.trim(), email: email.trim().toLowerCase(), answers })
     } finally {
       setSubmitting(false)
     }
@@ -134,13 +127,13 @@ export default function SurveyForm({ onSubmit }: Props) {
         <p className="text-lg font-medium text-white/80 mb-2">基本資料</p>
         <div>
           <label className="block text-sm text-white/50 mb-1">
-            姓名 <span className="text-red-400">*</span>
+            Threads 帳號 <span className="text-red-400">*</span>
           </label>
           <input
             type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="你的名字"
+            value={threadsAccount}
+            onChange={e => setThreadsAccount(e.target.value)}
+            placeholder="@your_threads_account"
             className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
           />
         </div>

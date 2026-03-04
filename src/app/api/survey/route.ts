@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto'
 import { z } from 'zod'
 
 const submitSchema = z.object({
-  name: z.string().min(1, '請輸入姓名'),
+  threadsAccount: z.string().min(1, '請輸入 Threads 帳號'),
   email: z.string().email('Email 格式不正確'),
   answers: z.record(z.union([z.string(), z.array(z.string())])),
 })
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: msg }, { status: 400 })
   }
 
-  const { name, email, answers } = parsed.data
+  const { threadsAccount, email, answers } = parsed.data
   const normalizedEmail = email.toLowerCase()
 
   if (hasSubmitted(normalizedEmail)) {
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   addResponse({
     id: randomUUID(),
     email: normalizedEmail,
-    name,
+    name: threadsAccount,
     answers,
     submittedAt: new Date().toISOString(),
   })
