@@ -84,8 +84,7 @@ export default function AdminPage() {
     ai_usage: 'AI 使用頻率',
     tools: '使用過的工具',
     topics: '想學的主題',
-    price: '可接受價格',
-    format: '偏好形式',
+    format: '偏好上課方式',
   }
 
   return (
