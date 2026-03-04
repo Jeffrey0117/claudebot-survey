@@ -48,10 +48,10 @@ const QUESTIONS: readonly Question[] = [
     required: true,
   },
   {
-    id: 'format',
-    label: '你偏好的上課方式？',
+    id: 'subscribe',
+    label: '如果每月 $200 就能訂閱使用 Claude Code（遠端連線，直接體驗），你會有興趣嗎？',
     type: 'radio',
-    options: ['錄播影片', '直播教學'],
+    options: ['非常有興趣', '會想試試看', '再觀望', '沒興趣'],
     required: true,
   },
   {

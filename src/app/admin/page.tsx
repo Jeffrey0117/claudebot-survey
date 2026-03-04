@@ -91,7 +91,7 @@ export default function AdminPage() {
     ai_usage: 'AI 使用頻率',
     tools: '使用過的工具',
     topics: '想學的主題',
-    format: '偏好上課方式',
+    subscribe: '月訂閱 $200 體驗 Claude Code',
   }
 
   return (
