@@ -1,56 +1,25 @@
 'use client'
 
-import { useSession, signOut } from 'next-auth/react'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import SurveyForm from '@/components/SurveyForm'
 
 export default function Home() {
-  const { data: session, status } = useSession()
   const [submitted, setSubmitted] = useState(false)
-  const [checking, setChecking] = useState(true)
-  const router = useRouter()
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login')
-      return
-    }
-    if (session?.user?.email) {
-      fetch('/api/survey')
-        .then(r => r.json())
-        .then(d => {
-          setSubmitted(d.submitted)
-          setChecking(false)
-        })
-        .catch(() => setChecking(false))
-    } else {
-      setChecking(false)
-    }
-  }, [session, status, router])
-
-  async function handleSubmit(answers: Record<string, string | string[]>) {
+  async function handleSubmit(data: { name: string; email: string; answers: Record<string, string | string[]> }) {
     const res = await fetch('/api/survey', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answers }),
+      body: JSON.stringify(data),
     })
 
     if (!res.ok) {
-      const data = await res.json()
-      alert(data.error ?? '提交失敗')
+      const json = await res.json()
+      alert(json.error ?? '提交失敗')
       return
     }
 
     setSubmitted(true)
-  }
-
-  if (status === 'loading' || checking) {
-    return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="text-white/40">載入中...</div>
-      </main>
-    )
   }
 
   return (
@@ -58,7 +27,7 @@ export default function Home() {
       {/* Header */}
       <div className="text-center mb-12 max-w-2xl">
         <div className="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 px-4 py-1.5 rounded-full text-sm mb-6">
-          ✦ Powered by ClaudeBot
+          Powered by ClaudeBot
         </div>
         <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
           用 AI 打造你的開發工作流
@@ -75,26 +44,9 @@ export default function Home() {
             <div className="text-6xl mb-6">🎉</div>
             <h2 className="text-2xl font-bold mb-3">感謝你的回饋！</h2>
             <p className="text-white/60 mb-6">你的意見對我們很重要，課程準備好後會通知你</p>
-            <button
-              onClick={() => signOut({ callbackUrl: '/login' })}
-              className="text-white/40 hover:text-white/60 transition-colors text-sm"
-            >
-              登出
-            </button>
           </div>
         ) : (
-          <>
-            <div className="flex items-center justify-between mb-6 bg-white/5 rounded-xl p-4 border border-white/10">
-              <span className="text-white/60 text-sm">{session?.user?.name} ({session?.user?.email})</span>
-              <button
-                onClick={() => signOut({ callbackUrl: '/login' })}
-                className="text-white/30 hover:text-white/60 text-sm transition-colors"
-              >
-                登出
-              </button>
-            </div>
-            <SurveyForm onSubmit={handleSubmit} />
-          </>
+          <SurveyForm onSubmit={handleSubmit} />
         )}
       </div>
 

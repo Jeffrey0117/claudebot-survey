@@ -30,6 +30,7 @@ const QUESTIONS: readonly Question[] = [
     label: '你目前用過哪些 AI 開發工具？（可多選）',
     type: 'checkbox',
     options: ['ChatGPT', 'Claude', 'GitHub Copilot', 'Cursor', 'Claude Code CLI', '其他'],
+    required: true,
   },
   {
     id: 'topics',
@@ -44,18 +45,21 @@ const QUESTIONS: readonly Question[] = [
       'AI Directive 系統',
       '自動化部署',
     ],
+    required: true,
   },
   {
     id: 'price',
     label: '你覺得合理的課程價格區間？',
     type: 'radio',
     options: ['NT$ 500 以下', 'NT$ 500–1,000', 'NT$ 1,000–2,000', 'NT$ 2,000 以上'],
+    required: true,
   },
   {
     id: 'format',
     label: '你偏好的上課方式？',
     type: 'radio',
     options: ['錄播影片', '直播教學', '圖文教程', '混合式（影片+文字）'],
+    required: true,
   },
   {
     id: 'feedback',
@@ -65,10 +69,12 @@ const QUESTIONS: readonly Question[] = [
 ]
 
 interface Props {
-  readonly onSubmit: (answers: Record<string, string | string[]>) => Promise<void>
+  readonly onSubmit: (data: { name: string; email: string; answers: Record<string, string | string[]> }) => Promise<void>
 }
 
 export default function SurveyForm({ onSubmit }: Props) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [submitting, setSubmitting] = useState(false)
 
@@ -93,9 +99,21 @@ export default function SurveyForm({ onSubmit }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
-    // Validate required
+    if (!name.trim()) {
+      alert('請輸入你的姓名')
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      alert('請輸入有效的 Email')
+      return
+    }
+
     for (const q of QUESTIONS) {
-      if (q.required && !answers[q.id]) {
+      if (!q.required) continue
+      const val = answers[q.id]
+      if (!val || (Array.isArray(val) && val.length === 0)) {
         alert(`請回答：${q.label}`)
         return
       }
@@ -103,7 +121,7 @@ export default function SurveyForm({ onSubmit }: Props) {
 
     setSubmitting(true)
     try {
-      await onSubmit(answers)
+      await onSubmit({ name: name.trim(), email: email.trim().toLowerCase(), answers })
     } finally {
       setSubmitting(false)
     }
@@ -111,6 +129,35 @@ export default function SurveyForm({ onSubmit }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Identity fields */}
+      <div className="bg-white/5 backdrop-blur rounded-xl p-6 border border-white/10 space-y-4">
+        <p className="text-lg font-medium text-white/80 mb-2">基本資料</p>
+        <div>
+          <label className="block text-sm text-white/50 mb-1">
+            姓名 <span className="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="你的名字"
+            className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-white/50 mb-1">
+            Email <span className="text-red-400">*</span>
+          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+          />
+        </div>
+      </div>
+
       {QUESTIONS.map((q, idx) => (
         <div key={q.id} className="bg-white/5 backdrop-blur rounded-xl p-6 border border-white/10">
           <p className="text-lg font-medium mb-4">
@@ -171,7 +218,7 @@ export default function SurveyForm({ onSubmit }: Props) {
         disabled={submitting}
         className="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 rounded-xl text-lg font-semibold transition-colors"
       >
-        {submitting ? '提交中...' : '送出問卷 ✦'}
+        {submitting ? '提交中...' : '送出問卷'}
       </button>
     </form>
   )
