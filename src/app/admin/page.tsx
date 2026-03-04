@@ -1,7 +1,6 @@
 'use client'
 
-import { useSession, signIn } from 'next-auth/react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 interface SurveyResponse {
   readonly id: string
@@ -12,35 +11,42 @@ interface SurveyResponse {
 }
 
 export default function AdminPage() {
-  const { data: session, status } = useSession()
+  const [password, setPassword] = useState('')
+  const [authed, setAuthed] = useState(false)
   const [responses, setResponses] = useState<SurveyResponse[]>([])
   const [total, setTotal] = useState(0)
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    if (session) {
-      fetch('/api/admin')
-        .then(r => r.json())
-        .then(d => {
-          if (d.error) {
-            setError(d.error)
-          } else {
-            setResponses(d.responses)
-            setTotal(d.total)
-          }
-          setLoading(false)
-        })
-        .catch(() => {
-          setError('載入失敗')
-          setLoading(false)
-        })
-    } else {
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    try {
+      const res = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error ?? '登入失敗')
+        setLoading(false)
+        return
+      }
+
+      setResponses(data.responses)
+      setTotal(data.total)
+      setAuthed(true)
+    } catch {
+      setError('連線失敗')
+    } finally {
       setLoading(false)
     }
-  }, [session])
+  }
 
-  // Aggregate stats
   function countAnswers(questionId: string): Record<string, number> {
     const counts: Record<string, number> = {}
     for (const r of responses) {
@@ -54,27 +60,28 @@ export default function AdminPage() {
     return counts
   }
 
-  if (status === 'loading' || loading) {
-    return <div className="min-h-screen flex items-center justify-center text-white/40">載入中...</div>
-  }
-
-  if (!session) {
+  if (!authed) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <button
-          onClick={() => signIn('google')}
-          className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-500 transition-colors"
-        >
-          管理員登入
-        </button>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-red-400">
-        {error}
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <form onSubmit={handleLogin} className="bg-white/5 backdrop-blur rounded-2xl p-8 border border-white/10 w-full max-w-sm space-y-4">
+          <h2 className="text-xl font-bold text-center">管理員登入</h2>
+          <input
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="輸入密碼"
+            className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            autoFocus
+          />
+          {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+          <button
+            type="submit"
+            disabled={loading || !password}
+            className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 rounded-xl font-semibold transition-colors"
+          >
+            {loading ? '驗證中...' : '登入'}
+          </button>
+        </form>
       </div>
     )
   }
@@ -89,7 +96,7 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen px-4 py-12 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">📊 問卷結果</h1>
+      <h1 className="text-3xl font-bold mb-2">問卷結果</h1>
       <p className="text-white/40 mb-8">共 {total} 份回覆</p>
 
       {/* Stats cards */}
