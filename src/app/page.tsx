@@ -25,17 +25,54 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center px-4 py-12">
       {/* Header */}
-      <div className="text-center mb-12 max-w-2xl">
-        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-300 px-4 py-1.5 rounded-full text-sm mb-6 border border-blue-500/30">
-          <span className="text-xl">👨‍💻</span>
-          <span className="font-medium">html_cat — 切版職人</span>
-        </div>
-        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-          用 AI 打造你的開發工作流
+      <div className="text-center mb-8 max-w-2xl">
+        <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+          使用 Claude Code 開發
         </h1>
         <p className="text-white/60 text-lg">
           課程興趣調查 — 幫我了解你的需求，打造最適合的內容
         </p>
+      </div>
+
+      {/* Author card */}
+      <div className="w-full max-w-2xl mb-10">
+        <div className="bg-white/5 backdrop-blur rounded-xl p-6 border border-white/10">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-2xl">
+              🐱
+            </div>
+            <div>
+              <p className="text-lg font-bold">html_cat</p>
+              <p className="text-white/50 text-sm">切版職人 · 全端開發者</p>
+            </div>
+            <div className="ml-auto flex items-center gap-3 text-sm text-white/40">
+              <span>IG 3K+</span>
+              <span className="text-white/20">·</span>
+              <span>Threads 2K+</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 text-center mb-4">
+            <div className="bg-white/5 rounded-lg p-3">
+              <p className="text-xl font-bold text-blue-400">3</p>
+              <p className="text-xs text-white/40 mt-1">產品上線營運中</p>
+            </div>
+            <div className="bg-white/5 rounded-lg p-3">
+              <p className="text-xl font-bold text-purple-400">5K+</p>
+              <p className="text-xs text-white/40 mt-1">月活躍用戶</p>
+            </div>
+            <div className="bg-white/5 rounded-lg p-3">
+              <p className="text-xl font-bold text-green-400">100W+</p>
+              <p className="text-xs text-white/40 mt-1">產品總流量</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2 text-xs">
+            <span className="bg-blue-500/15 text-blue-300 px-2.5 py-1 rounded-full">線上課程販售・學員六位數營收</span>
+            <span className="bg-purple-500/15 text-purple-300 px-2.5 py-1 rounded-full">10+ 開發工具上架</span>
+            <span className="bg-green-500/15 text-green-300 px-2.5 py-1 rounded-full">技術教學文章作者</span>
+          </div>
+        </div>
       </div>
 
       {/* Form */}
@@ -51,7 +88,7 @@ export default function Home() {
               </p>
               <p className="text-white/60 text-sm leading-relaxed">
                 從設計 UI、寫程式碼、到自動化部署上線——全部在手機上用 Telegram 指揮 AI 完成。
-                這正是我想在課程裡教你的：<span className="text-white/80">用 AI 打造屬於你的高效開發工作流</span>。
+                這正是我想在課程裡教你的：<span className="text-white/80">用 Claude Code 打造屬於你的高效開發工作流</span>。
               </p>
             </div>
 
