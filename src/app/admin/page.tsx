@@ -70,15 +70,15 @@ export default function AdminPage() {
 
   if (!authed) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#0b0d14' }}>
-        <form onSubmit={handleLogin} className="rounded-2xl p-8 border border-white/[0.06] w-full max-w-sm space-y-4" style={{ background: 'rgba(255,255,255,0.03)' }}>
-          <h2 className="text-xl font-bold text-center text-white">管理員登入</h2>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <form onSubmit={handleLogin} className="rounded-2xl p-8 w-full max-w-sm space-y-4" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
+          <h2 className="text-xl font-bold text-center" style={{ color: 'var(--theme-text)' }}>管理員登入</h2>
           <input
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             placeholder="輸入密碼"
-            className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-blue-500/40 transition-all"
+            className="w-full themed-input rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500/40 transition-all"
             autoFocus
           />
           {error && <p className="text-red-400 text-sm text-center">{error}</p>}
@@ -122,55 +122,55 @@ export default function AdminPage() {
   const allThreads = responses.map(r => r.name).join('\n')
 
   return (
-    <main className="min-h-screen px-4 py-8 sm:py-12 max-w-4xl mx-auto text-white" style={{ background: '#0b0d14' }}>
+    <main className="min-h-screen px-4 py-8 sm:py-12 max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-end justify-between mb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">問卷後台</h1>
-          <p className="text-white/30 text-sm mt-1">共 {total} 份回覆</p>
+          <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--theme-text)' }}>問卷後台</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--theme-text-muted)' }}>共 {total} 份回覆</p>
         </div>
-        <div className="text-right text-xs text-white/20">
+        <div className="text-right text-xs" style={{ color: 'var(--theme-text-faint)' }}>
           survey.isnowfriend.com
         </div>
       </div>
 
       {/* Quick stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-        <div className="rounded-xl border border-white/[0.06] p-4 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="rounded-xl p-4 text-center" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
           <p className="text-3xl font-bold text-blue-400">{total}</p>
-          <p className="text-[11px] text-white/30 mt-1">總回覆</p>
+          <p className="text-[11px] mt-1" style={{ color: 'var(--theme-text-muted)' }}>總回覆</p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] p-4 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="rounded-xl p-4 text-center" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
           <p className="text-3xl font-bold text-emerald-400">
             {total > 0 ? Math.round((countAnswers('interest')['非常有興趣'] ?? 0) / total * 100) : 0}%
           </p>
-          <p className="text-[11px] text-white/30 mt-1">非常有興趣</p>
+          <p className="text-[11px] mt-1" style={{ color: 'var(--theme-text-muted)' }}>非常有興趣</p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] p-4 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="rounded-xl p-4 text-center" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
           <p className="text-3xl font-bold text-purple-400">
             {total > 0 ? Math.round(((countAnswers('subscribe')['非常有興趣'] ?? 0) + (countAnswers('subscribe')['會想試試看'] ?? 0)) / total * 100) : 0}%
           </p>
-          <p className="text-[11px] text-white/30 mt-1">訂閱意願</p>
+          <p className="text-[11px] mt-1" style={{ color: 'var(--theme-text-muted)' }}>訂閱意願</p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] p-4 text-center" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="rounded-xl p-4 text-center" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
           <p className="text-3xl font-bold text-amber-400">
             {responses.filter(r => r.answers.feedback).length}
           </p>
-          <p className="text-[11px] text-white/30 mt-1">文字回饋</p>
+          <p className="text-[11px] mt-1" style={{ color: 'var(--theme-text-muted)' }}>文字回饋</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 border-b border-white/[0.06] pb-px">
+      <div className="flex gap-1 mb-6 pb-px" style={{ borderBottom: '1px solid var(--theme-border)' }}>
         {tabs.map(t => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-4 py-2.5 text-sm transition-all rounded-t-lg ${
-              tab === t.key
-                ? 'text-white bg-white/[0.05] border border-white/[0.08] border-b-transparent -mb-px'
-                : 'text-white/30 hover:text-white/50'
-            }`}
+            className="px-4 py-2.5 text-sm transition-all rounded-t-lg"
+            style={tab === t.key
+              ? { color: 'var(--theme-text)', background: 'var(--theme-surface-hover)', border: '1px solid var(--theme-border)', borderBottom: '1px solid transparent', marginBottom: '-1px' }
+              : { color: 'var(--theme-text-muted)' }
+            }
           >
             {t.label}
           </button>
@@ -186,8 +186,8 @@ export default function AdminPage() {
             if (entries.length === 0) return null
             const maxCount = Math.max(...entries.map(e => e[1]))
             return (
-              <div key={qId} className="rounded-xl border border-white/[0.06] p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                <h3 className="text-sm font-medium text-white/60 mb-4">{label}</h3>
+              <div key={qId} className="rounded-xl p-5" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
+                <h3 className="text-sm font-medium mb-4" style={{ color: 'var(--theme-text-tertiary)' }}>{label}</h3>
                 <div className="space-y-2.5">
                   {entries.map(([val, count], i) => {
                     const pct = total > 0 ? Math.round((count / total) * 100) : 0
@@ -195,10 +195,10 @@ export default function AdminPage() {
                     return (
                       <div key={val}>
                         <div className="flex justify-between text-xs mb-1">
-                          <span className="text-white/70 truncate mr-2">{val}</span>
-                          <span className="text-white/30 shrink-0">{count} ({pct}%)</span>
+                          <span className="truncate mr-2" style={{ color: 'var(--theme-text-secondary)' }}>{val}</span>
+                          <span className="shrink-0" style={{ color: 'var(--theme-text-muted)' }}>{count} ({pct}%)</span>
                         </div>
-                        <div className="h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
+                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--theme-bar-track)' }}>
                           <div
                             className={`h-full rounded-full transition-all ${barColors[i % barColors.length]}`}
                             style={{ width: `${barWidth}%` }}
@@ -221,40 +221,43 @@ export default function AdminPage() {
           <div className="flex gap-2">
             <button
               onClick={() => copyText(allEmails, 'email')}
-              className="text-xs bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg px-3 py-2 text-white/60 transition-all"
+              className="text-xs rounded-lg px-3 py-2 transition-all"
+              style={{ background: 'var(--theme-surface)', border: '1px solid var(--theme-border)', color: 'var(--theme-text-tertiary)' }}
             >
               {copied === 'email' ? '已複製!' : '複製全部 Email'}
             </button>
             <button
               onClick={() => copyText(allThreads, 'threads')}
-              className="text-xs bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg px-3 py-2 text-white/60 transition-all"
+              className="text-xs rounded-lg px-3 py-2 transition-all"
+              style={{ background: 'var(--theme-surface)', border: '1px solid var(--theme-border)', color: 'var(--theme-text-tertiary)' }}
             >
               {copied === 'threads' ? '已複製!' : '複製全部 Threads'}
             </button>
           </div>
 
           {/* Contact list */}
-          <div className="rounded-xl border border-white/[0.06] overflow-hidden" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
             {responses.length === 0 ? (
-              <div className="px-4 py-8 text-center text-white/20 text-sm">目前沒有回覆</div>
+              <div className="px-4 py-8 text-center text-sm" style={{ color: 'var(--theme-text-faint)' }}>目前沒有回覆</div>
             ) : (
               responses.map((r, i) => (
                 <div
                   key={r.id}
-                  className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 transition-colors"
+                  style={{ borderBottom: '1px solid var(--theme-border)' }}
                 >
-                  <span className="text-xs text-white/15 w-6 shrink-0 text-right">{i + 1}</span>
+                  <span className="text-xs w-6 shrink-0 text-right" style={{ color: 'var(--theme-text-faint)' }}>{i + 1}</span>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-sm text-white/80 font-medium truncate">{r.name}</span>
+                      <span className="text-sm font-medium truncate" style={{ color: 'var(--theme-text-secondary)' }}>{r.name}</span>
                       {r.answers.interest === '非常有興趣' && <span className="text-[9px] bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 rounded shrink-0">超有興趣</span>}
                       {r.answers.interest === '有點興趣' && <span className="text-[9px] bg-blue-500/15 text-blue-400 px-1.5 py-0.5 rounded shrink-0">有興趣</span>}
                     </div>
-                    <p className="text-xs text-white/35 truncate">{r.email}</p>
+                    <p className="text-xs truncate" style={{ color: 'var(--theme-text-muted)' }}>{r.email}</p>
                   </div>
 
-                  <div className="text-[10px] text-white/15 shrink-0">
+                  <div className="text-[10px] shrink-0" style={{ color: 'var(--theme-text-faint)' }}>
                     {new Date(r.submittedAt).toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' })}
                   </div>
                 </div>
@@ -268,21 +271,21 @@ export default function AdminPage() {
       {tab === 'feedback' && (
         <div className="space-y-3">
           {responses.filter(r => r.answers.feedback).length === 0 ? (
-            <div className="rounded-xl border border-white/[0.06] p-8 text-center text-white/20 text-sm" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <div className="rounded-xl p-8 text-center text-sm" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)', color: 'var(--theme-text-faint)' }}>
               暫無文字回饋
             </div>
           ) : (
             responses
               .filter(r => r.answers.feedback)
               .map(r => (
-                <div key={r.id} className="rounded-xl border border-white/[0.06] p-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                <div key={r.id} className="rounded-xl p-4" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-white/50">{r.name}</span>
-                    <span className="text-[10px] text-white/20">
+                    <span className="text-xs" style={{ color: 'var(--theme-text-tertiary)' }}>{r.name}</span>
+                    <span className="text-[10px]" style={{ color: 'var(--theme-text-faint)' }}>
                       {new Date(r.submittedAt).toLocaleString('zh-TW')}
                     </span>
                   </div>
-                  <p className="text-sm text-white/70 leading-relaxed">{r.answers.feedback}</p>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--theme-text-secondary)' }}>{r.answers.feedback}</p>
                 </div>
               ))
           )}
@@ -290,11 +293,11 @@ export default function AdminPage() {
       )}
 
       {/* Raw data */}
-      <details className="mt-8 rounded-xl border border-white/[0.06] p-5" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <summary className="cursor-pointer text-xs text-white/20 hover:text-white/40 transition-colors">
+      <details className="mt-8 rounded-xl p-5" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
+        <summary className="cursor-pointer text-xs transition-colors" style={{ color: 'var(--theme-text-faint)' }}>
           原始 JSON ({total} 筆)
         </summary>
-        <pre className="mt-4 text-[10px] text-white/25 overflow-x-auto leading-relaxed">
+        <pre className="mt-4 text-[10px] overflow-x-auto leading-relaxed" style={{ color: 'var(--theme-text-muted)' }}>
           {JSON.stringify(responses, null, 2)}
         </pre>
       </details>

@@ -11,6 +11,75 @@
   --color-mint-soft: rgba(52, 211, 153, 0.12);
 }
 
+/* ── Theme Variables ── */
+
+/* Dark theme (default) — slightly brighter than before */
+:root,
+[data-theme="dark"] {
+  --theme-bg: #0f1118;
+  --theme-bg-gradient: rgba(59,130,246,0.08);
+  --theme-surface: rgba(255, 255, 255, 0.035);
+  --theme-surface-hover: rgba(255, 255, 255, 0.06);
+  --theme-border: rgba(255, 255, 255, 0.08);
+  --theme-text: #ffffff;
+  --theme-text-secondary: rgba(255, 255, 255, 0.7);
+  --theme-text-tertiary: rgba(255, 255, 255, 0.45);
+  --theme-text-muted: rgba(255, 255, 255, 0.25);
+  --theme-text-faint: rgba(255, 255, 255, 0.15);
+  --theme-input-bg: rgba(255, 255, 255, 0.04);
+  --theme-input-border: rgba(255, 255, 255, 0.1);
+  --theme-input-placeholder: rgba(255, 255, 255, 0.22);
+  --theme-coupon-hole: #0f1118;
+  --theme-coupon-divider: rgba(255,255,255,0.1);
+  --theme-coupon-grid: rgba(255,255,255,0.03);
+  --theme-shimmer: rgba(255,255,255,0.03);
+  --theme-radio-border: rgba(255, 255, 255, 0.22);
+  --theme-radio-bg: rgba(255, 255, 255, 0.04);
+  --theme-radio-inset: #0f1118;
+  --theme-checkbox-check: white;
+  --theme-selected-bg: rgba(59, 130, 246, 0.08);
+  --theme-badge-bg: rgba(255, 255, 255, 0.04);
+  --theme-badge-text: rgba(255, 255, 255, 0.25);
+  --theme-bar-track: rgba(255, 255, 255, 0.05);
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --theme-bg: #f8f9fc;
+  --theme-bg-gradient: rgba(59,130,246,0.04);
+  --theme-surface: rgba(0, 0, 0, 0.025);
+  --theme-surface-hover: rgba(0, 0, 0, 0.04);
+  --theme-border: rgba(0, 0, 0, 0.08);
+  --theme-text: #1a1a2e;
+  --theme-text-secondary: rgba(0, 0, 0, 0.7);
+  --theme-text-tertiary: rgba(0, 0, 0, 0.5);
+  --theme-text-muted: rgba(0, 0, 0, 0.3);
+  --theme-text-faint: rgba(0, 0, 0, 0.12);
+  --theme-input-bg: rgba(0, 0, 0, 0.03);
+  --theme-input-border: rgba(0, 0, 0, 0.1);
+  --theme-input-placeholder: rgba(0, 0, 0, 0.3);
+  --theme-coupon-hole: #f8f9fc;
+  --theme-coupon-divider: rgba(0,0,0,0.08);
+  --theme-coupon-grid: rgba(0,0,0,0.02);
+  --theme-shimmer: rgba(255,255,255,0.5);
+  --theme-radio-border: rgba(0, 0, 0, 0.2);
+  --theme-radio-bg: rgba(0, 0, 0, 0.03);
+  --theme-radio-inset: #f8f9fc;
+  --theme-checkbox-check: white;
+  --theme-selected-bg: rgba(59, 130, 246, 0.06);
+  --theme-badge-bg: rgba(0, 0, 0, 0.04);
+  --theme-badge-text: rgba(0, 0, 0, 0.4);
+  --theme-bar-track: rgba(0, 0, 0, 0.05);
+}
+
+/* ── Theme application ── */
+body {
+  background-color: var(--theme-bg) !important;
+  background-image: radial-gradient(ellipse 80% 50% at 50% -20%, var(--theme-bg-gradient), transparent) !important;
+  color: var(--theme-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 /* Coupon perforation effect */
 .coupon-edge-left,
 .coupon-edge-right {
@@ -31,12 +100,13 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--color-surface);
+  background: var(--theme-coupon-hole);
   flex-shrink: 0;
+  transition: background 0.3s ease;
 }
 
 .coupon-divider {
-  border-left: 2px dashed rgba(255,255,255,0.1);
+  border-left: 2px dashed var(--theme-coupon-divider);
   height: 100%;
   position: absolute;
   top: 0;
@@ -46,7 +116,7 @@
 /* Subtle grid pattern for coupon background */
 .coupon-pattern {
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0);
+    radial-gradient(circle at 1px 1px, var(--theme-coupon-grid) 1px, transparent 0);
   background-size: 16px 16px;
 }
 
@@ -56,8 +126,8 @@ input[type="checkbox"] {
   appearance: none;
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid var(--theme-radio-border);
+  background: var(--theme-radio-bg);
   cursor: pointer;
   transition: all 0.15s ease;
   flex-shrink: 0;
@@ -74,7 +144,7 @@ input[type="checkbox"] {
 input[type="radio"]:checked {
   border-color: var(--color-accent);
   background: var(--color-accent);
-  box-shadow: inset 0 0 0 3px var(--color-surface);
+  box-shadow: inset 0 0 0 3px var(--theme-radio-inset);
 }
 
 input[type="checkbox"]:checked {
@@ -104,4 +174,22 @@ input[type="checkbox"]:checked {
 
 .code-glow {
   animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+/* ── Themed utility classes ── */
+.themed-card {
+  background: var(--theme-surface);
+  border-color: var(--theme-border);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.themed-input {
+  background: var(--theme-input-bg);
+  border-color: var(--theme-input-border);
+  color: var(--theme-text);
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.themed-input::placeholder {
+  color: var(--theme-input-placeholder);
 }

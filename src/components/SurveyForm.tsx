@@ -123,12 +123,12 @@ export default function SurveyForm({ onSubmit }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Identity */}
-      <div className="rounded-2xl border border-white/[0.06] p-5 sm:p-6 space-y-4" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <p className="text-sm font-medium text-white/50 tracking-wide">基本資料</p>
+      <div className="rounded-2xl p-5 sm:p-6 space-y-4" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
+        <p className="text-sm font-medium tracking-wide" style={{ color: 'var(--theme-text-tertiary)' }}>基本資料</p>
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs text-white/30 mb-1.5">
+            <label className="block text-xs mb-1.5" style={{ color: 'var(--theme-text-muted)' }}>
               Threads 帳號 <span className="text-red-400/70">*</span>
             </label>
             <input
@@ -136,12 +136,12 @@ export default function SurveyForm({ onSubmit }: Props) {
               value={threadsAccount}
               onChange={e => setThreadsAccount(e.target.value)}
               placeholder="@your_account"
-              className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all"
+              className="w-full themed-input rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent/40 transition-all"
             />
-            <p className="text-[11px] text-white/20 mt-1.5 pl-1">方便後續聯繫與私訊通知用</p>
+            <p className="text-[11px] mt-1.5 pl-1" style={{ color: 'var(--theme-text-faint)' }}>方便後續聯繫與私訊通知用</p>
           </div>
           <div>
-            <label className="block text-xs text-white/30 mb-1.5">
+            <label className="block text-xs mb-1.5" style={{ color: 'var(--theme-text-muted)' }}>
               Email <span className="text-red-400/70">*</span>
             </label>
             <input
@@ -149,9 +149,9 @@ export default function SurveyForm({ onSubmit }: Props) {
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="your@email.com"
-              className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all"
+              className="w-full themed-input rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent/40 transition-all"
             />
-            <p className="text-[11px] text-white/20 mt-1.5 pl-1">用於寄送折扣碼與課程上線通知</p>
+            <p className="text-[11px] mt-1.5 pl-1" style={{ color: 'var(--theme-text-faint)' }}>用於寄送折扣碼與課程上線通知</p>
           </div>
         </div>
       </div>
@@ -160,10 +160,10 @@ export default function SurveyForm({ onSubmit }: Props) {
       {QUESTIONS.map((q, idx) => (
         <div
           key={q.id}
-          className="rounded-2xl border border-white/[0.06] p-5 sm:p-6"
-          style={{ background: 'rgba(255,255,255,0.02)' }}
+          className="rounded-2xl p-5 sm:p-6"
+          style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}
         >
-          <p className="text-sm font-medium mb-4 text-white/80">
+          <p className="text-sm font-medium mb-4" style={{ color: 'var(--theme-text-secondary)' }}>
             <span className="text-accent/60 mr-1.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{String(idx + 1).padStart(2, '0')}</span>
             {q.label}
             {q.required && <span className="text-red-400/50 ml-1 text-xs">*</span>}
@@ -176,11 +176,11 @@ export default function SurveyForm({ onSubmit }: Props) {
                 return (
                   <label
                     key={opt}
-                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl cursor-pointer transition-all text-sm ${
-                      selected
-                        ? 'bg-accent/[0.08] text-white/90'
-                        : 'hover:bg-white/[0.03] text-white/60'
-                    }`}
+                    className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl cursor-pointer transition-all text-sm"
+                    style={{
+                      background: selected ? 'var(--theme-selected-bg)' : 'transparent',
+                      color: selected ? 'var(--theme-text-secondary)' : 'var(--theme-text-tertiary)',
+                    }}
                   >
                     <input
                       type="radio"
@@ -203,11 +203,11 @@ export default function SurveyForm({ onSubmit }: Props) {
                 return (
                   <label
                     key={opt}
-                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl cursor-pointer transition-all text-sm ${
-                      checked
-                        ? 'bg-accent/[0.08] text-white/90'
-                        : 'hover:bg-white/[0.03] text-white/60'
-                    }`}
+                    className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl cursor-pointer transition-all text-sm"
+                    style={{
+                      background: checked ? 'var(--theme-selected-bg)' : 'transparent',
+                      color: checked ? 'var(--theme-text-secondary)' : 'var(--theme-text-tertiary)',
+                    }}
                   >
                     <input
                       type="checkbox"
@@ -228,7 +228,7 @@ export default function SurveyForm({ onSubmit }: Props) {
               onChange={e => handleText(q.id, e.target.value)}
               placeholder="請輸入..."
               rows={3}
-              className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all resize-none"
+              className="w-full themed-input rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent/40 transition-all resize-none"
             />
           )}
         </div>
@@ -237,7 +237,7 @@ export default function SurveyForm({ onSubmit }: Props) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full py-3.5 bg-accent hover:bg-accent/90 disabled:bg-accent/40 rounded-xl text-sm font-semibold transition-all active:scale-[0.99]"
+        className="w-full py-3.5 bg-accent hover:bg-accent/90 disabled:bg-accent/40 rounded-xl text-sm font-semibold transition-all active:scale-[0.99] text-white"
       >
         {submitting ? '提交中...' : '送出問卷，領取折扣碼'}
       </button>

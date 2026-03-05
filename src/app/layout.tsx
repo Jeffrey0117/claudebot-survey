@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import ThemeProvider from '@/components/ThemeProvider'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export const metadata: Metadata = {
   title: '填問卷送 $200 折扣券 — 使用 Claude Code 開發',
@@ -20,21 +22,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="zh-TW">
+    <html lang="zh-TW" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+        <script dangerouslySetInnerHTML={{ __html: `
+          try {
+            const t = localStorage.getItem('survey-theme');
+            if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+          } catch(e) {}
+        `}} />
       </head>
       <body
-        className="min-h-screen text-white antialiased"
-        style={{
-          fontFamily: "'Noto Sans TC', sans-serif",
-          backgroundColor: '#0b0d14',
-          backgroundImage: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59,130,246,0.08), transparent)',
-        }}
+        className="min-h-screen antialiased transition-colors duration-300"
+        style={{ fontFamily: "'Noto Sans TC', sans-serif" }}
       >
-        {children}
+        <ThemeProvider>
+          <ThemeToggle />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

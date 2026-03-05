@@ -9,10 +9,10 @@ function CouponCard() {
   return (
     <div className="w-full max-w-lg mx-auto">
       {/* Coupon ticket */}
-      <div className="relative coupon-pattern rounded-2xl border border-white/[0.08] overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(52,211,153,0.06) 0%, rgba(59,130,246,0.04) 100%)' }}>
+      <div className="relative coupon-pattern rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(52,211,153,0.06) 0%, rgba(59,130,246,0.04) 100%)', border: '1px solid var(--theme-border)' }}>
         {/* Shimmer overlay */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl">
-          <div className="coupon-shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent" />
+          <div className="coupon-shimmer absolute inset-0" style={{ background: `linear-gradient(to right, transparent, var(--theme-shimmer), transparent)` }} />
         </div>
 
         {/* Perforation edges */}
@@ -26,10 +26,10 @@ function CouponCard() {
         <div className="relative px-8 sm:px-12 py-8 sm:py-10">
           {/* Top label */}
           <div className="flex items-center justify-between mb-6">
-            <span className="text-xs tracking-[0.2em] uppercase text-white/30" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+            <span className="text-xs tracking-[0.2em] uppercase" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'var(--theme-text-muted)' }}>
               Course Coupon
             </span>
-            <span className="text-xs text-white/20" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+            <span className="text-xs" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'var(--theme-text-faint)' }}>
               #2025
             </span>
           </div>
@@ -40,16 +40,16 @@ function CouponCard() {
               <span className="text-lg text-mint/60 font-medium">NT$</span>
               <span className="text-6xl sm:text-7xl font-black text-mint tracking-tight" style={{ fontFamily: "'JetBrains Mono', monospace" }}>200</span>
             </div>
-            <p className="text-white/40 text-sm mt-2">課程折抵金</p>
+            <p className="text-sm mt-2" style={{ color: 'var(--theme-text-tertiary)' }}>課程折抵金</p>
           </div>
 
           {/* Dashed separator */}
-          <div className="border-t-2 border-dashed border-white/[0.08] my-6" />
+          <div className="my-6" style={{ borderTop: '2px dashed var(--theme-border)' }} />
 
           {/* Code */}
           <div className="text-center space-y-3">
-            <p className="text-xs text-white/30 tracking-wider uppercase">折扣碼</p>
-            <div className="inline-block bg-white/[0.06] border border-mint/20 rounded-lg px-6 py-3">
+            <p className="text-xs tracking-wider uppercase" style={{ color: 'var(--theme-text-muted)' }}>折扣碼</p>
+            <div className="inline-block border border-mint/20 rounded-lg px-6 py-3" style={{ background: 'var(--theme-surface)' }}>
               <span className="text-2xl sm:text-3xl font-extrabold tracking-[0.15em] text-mint code-glow" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                 BOT200
               </span>
@@ -57,7 +57,7 @@ function CouponCard() {
           </div>
 
           {/* Bottom info */}
-          <div className="mt-8 flex items-center justify-between text-xs text-white/20">
+          <div className="mt-8 flex items-center justify-between text-xs" style={{ color: 'var(--theme-text-faint)' }}>
             <span>使用 Claude Code 開發</span>
             <span style={{ fontFamily: "'JetBrains Mono', monospace" }}>html_cat</span>
           </div>
@@ -66,7 +66,7 @@ function CouponCard() {
 
       {/* Instructions below coupon */}
       <div className="mt-5 text-center space-y-2">
-        <p className="text-white/50 text-sm">請截圖或記住折扣碼，購課時可折抵 NT$200</p>
+        <p className="text-sm" style={{ color: 'var(--theme-text-tertiary)' }}>請截圖或記住折扣碼，購課時可折抵 NT$200</p>
       </div>
     </div>
   )
@@ -74,7 +74,7 @@ function CouponCard() {
 
 function AuthorCard() {
   return (
-    <div className="relative rounded-2xl border border-white/[0.06] overflow-hidden" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)' }}>
+    <div className="relative rounded-2xl overflow-hidden" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-accent/[0.06] rounded-full blur-[80px] -translate-y-1/2" />
 
       <div className="relative p-5 sm:p-6">
@@ -85,12 +85,12 @@ function AuthorCard() {
             className="w-14 h-14 rounded-full object-cover ring-2 ring-accent/25"
           />
           <div className="flex-1 min-w-0">
-            <p className="text-lg font-bold tracking-tight">html_cat</p>
-            <p className="text-white/35 text-sm">切版職人 · 全端開發者</p>
+            <p className="text-lg font-bold tracking-tight" style={{ color: 'var(--theme-text)' }}>html_cat</p>
+            <p className="text-sm" style={{ color: 'var(--theme-text-muted)' }}>切版職人 · 全端開發者</p>
           </div>
           <div className="hidden sm:flex gap-1.5">
-            <span className="text-[11px] text-white/25 bg-white/[0.04] px-2 py-1 rounded">IG 3K+</span>
-            <span className="text-[11px] text-white/25 bg-white/[0.04] px-2 py-1 rounded">Threads 2K+</span>
+            <span className="text-[11px] px-2 py-1 rounded" style={{ color: 'var(--theme-badge-text)', background: 'var(--theme-badge-bg)' }}>IG 3K+</span>
+            <span className="text-[11px] px-2 py-1 rounded" style={{ color: 'var(--theme-badge-text)', background: 'var(--theme-badge-bg)' }}>Threads 2K+</span>
           </div>
         </div>
 
@@ -100,9 +100,9 @@ function AuthorCard() {
             { val: '5K+', label: '月活用戶', color: 'text-purple-400' },
             { val: '100W+', label: '總流量', color: 'text-mint' },
           ].map(({ val, label, color }) => (
-            <div key={label} className="bg-white/[0.03] rounded-xl py-2.5 text-center">
+            <div key={label} className="rounded-xl py-2.5 text-center" style={{ background: 'var(--theme-surface)' }}>
               <p className={`text-xl font-bold ${color}`} style={{ fontFamily: "'JetBrains Mono', monospace" }}>{val}</p>
-              <p className="text-[10px] text-white/25 mt-0.5">{label}</p>
+              <p className="text-[10px] mt-0.5" style={{ color: 'var(--theme-text-muted)' }}>{label}</p>
             </div>
           ))}
         </div>
@@ -114,8 +114,8 @@ function AuthorCard() {
         </div>
 
         <div className="flex sm:hidden gap-1.5 mt-3">
-          <span className="text-[11px] text-white/25 bg-white/[0.04] px-2 py-1 rounded">IG 3K+</span>
-          <span className="text-[11px] text-white/25 bg-white/[0.04] px-2 py-1 rounded">Threads 2K+</span>
+          <span className="text-[11px] px-2 py-1 rounded" style={{ color: 'var(--theme-badge-text)', background: 'var(--theme-badge-bg)' }}>IG 3K+</span>
+          <span className="text-[11px] px-2 py-1 rounded" style={{ color: 'var(--theme-badge-text)', background: 'var(--theme-badge-bg)' }}>Threads 2K+</span>
         </div>
       </div>
     </div>
@@ -150,11 +150,11 @@ export default function Home() {
           <span>填問卷領 NT$200 折扣碼</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black mb-3 leading-tight tracking-tight">
-          <span className="bg-gradient-to-r from-white via-white to-white/60 bg-clip-text text-transparent">使用 Claude Code</span>
+          <span className="bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(to right, var(--theme-text), var(--theme-text-secondary))' }}>使用 Claude Code</span>
           <br />
           <span className="bg-gradient-to-r from-accent to-accent/70 bg-clip-text text-transparent">打造你的開發工作流</span>
         </h1>
-        <p className="text-white/40 text-sm sm:text-base">
+        <p className="text-sm sm:text-base" style={{ color: 'var(--theme-text-tertiary)' }}>
           填完問卷立即領取折扣碼，未來課程可直接折抵
         </p>
       </div>
@@ -168,13 +168,13 @@ export default function Home() {
           <div className="space-y-8 py-4">
             <CouponCard />
 
-            <div className="rounded-2xl border border-white/[0.06] p-5 sm:p-6 space-y-3" style={{ background: 'rgba(255,255,255,0.02)' }}>
-              <p className="text-white/70 text-sm leading-relaxed">
+            <div className="rounded-2xl p-5 sm:p-6 space-y-3" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--theme-text-secondary)' }}>
                 這整個問卷網站，從 UI、程式碼到自動化部署，都是用
                 <span className="text-accent font-semibold"> ClaudeBot </span>
                 在手機上透過 Telegram 指揮 AI 完成的。
               </p>
-              <p className="text-white/40 text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--theme-text-tertiary)' }}>
                 這正是這門課要教的——用 Claude Code 打造屬於你的高效開發工作流。
                 課程準備好後會通知你，敬請期待。
               </p>
@@ -185,7 +185,7 @@ export default function Home() {
         )}
       </div>
 
-      <footer className="mt-16 text-center text-white/10 text-xs">
+      <footer className="mt-16 text-center text-xs" style={{ color: 'var(--theme-text-faint)' }}>
         Powered by ClaudeBot
       </footer>
     </main>
