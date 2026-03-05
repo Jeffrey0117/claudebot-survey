@@ -41,6 +41,13 @@
   --theme-badge-bg: rgba(255, 255, 255, 0.06);
   --theme-badge-text: rgba(255, 255, 255, 0.4);
   --theme-bar-track: rgba(255, 255, 255, 0.05);
+
+  /* AuthorCard */
+  --author-bg: linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(139,92,246,0.10) 50%, rgba(52,211,153,0.08) 100%);
+  --author-border: rgba(59, 130, 246, 0.25);
+  --author-glow: rgba(59, 130, 246, 0.08);
+  --author-ring: rgba(59, 130, 246, 0.4);
+  --author-stat-bg: rgba(255, 255, 255, 0.05);
 }
 
 /* Light theme */
@@ -70,6 +77,13 @@
   --theme-badge-bg: rgba(0, 0, 0, 0.04);
   --theme-badge-text: rgba(0, 0, 0, 0.4);
   --theme-bar-track: rgba(0, 0, 0, 0.05);
+
+  /* AuthorCard */
+  --author-bg: linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(139,92,246,0.06) 50%, rgba(52,211,153,0.05) 100%);
+  --author-border: rgba(59, 130, 246, 0.2);
+  --author-glow: rgba(59, 130, 246, 0.06);
+  --author-ring: rgba(59, 130, 246, 0.35);
+  --author-stat-bg: rgba(59, 130, 246, 0.05);
 }
 
 /* ── Theme application ── */
@@ -174,6 +188,48 @@ input[type="checkbox"]:checked {
 
 .code-glow {
   animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+/* ── Author Card ── */
+.author-card {
+  background: var(--author-bg);
+  border: 1.5px solid var(--author-border);
+  box-shadow:
+    0 0 30px var(--author-glow),
+    0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.author-card:hover {
+  box-shadow:
+    0 0 40px var(--author-glow),
+    0 6px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+@keyframes author-border-glow {
+  0%, 100% { border-color: var(--author-border); }
+  50% { border-color: rgba(59, 130, 246, 0.4); }
+}
+
+.author-card {
+  animation: author-border-glow 4s ease-in-out infinite;
+}
+
+.author-avatar-ring {
+  box-shadow:
+    0 0 0 3px var(--author-ring),
+    0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.author-stat-card {
+  background: var(--author-stat-bg);
+  border: 1px solid var(--author-border);
+  transition: all 0.2s ease;
+}
+
+.author-stat-card:hover {
+  background: var(--author-glow);
 }
 
 /* ── Themed utility classes ── */
