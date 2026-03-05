@@ -1,0 +1,19 @@
+{
+  "apps": [
+    {
+      "name": "claudebot-survey",
+      "script": "C:\\Users\\jeffb\\Desktop\\code\\workhub\\survey\\node_modules\\next\\dist\\bin\\next",
+      "cwd": "C:\\Users\\jeffb\\Desktop\\code\\workhub\\survey",
+      "env": {
+        "NODE_ENV": "production",
+        "PORT": "3456",
+        "ADMIN_PASSWORD": "htmlcat2025",
+        "AUTH_SECRET": "placeholder-not-needed-anymore",
+        "TELEGRAM_PROXY": "https://tg-proxy.jeffby8.workers.dev"
+      },
+      "autorestart": true,
+      "max_restarts": 5,
+      "args": "start"
+    }
+  ]
+}
