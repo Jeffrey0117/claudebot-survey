@@ -265,16 +265,15 @@ export default function AdminPage() {
               return (
                 <div key={qId} className="rounded-xl p-5" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
                   <h3 className="text-sm font-medium mb-1" style={{ color: 'var(--theme-text-tertiary)' }}>{label}</h3>
-                  <p className="text-[10px] mb-4" style={{ color: 'var(--theme-text-faint)' }}>可複選，百分比以總人數 {total} 為分母</p>
+                  <p className="text-[10px] mb-4" style={{ color: 'var(--theme-text-faint)' }}>可複選，共 {total} 人填答</p>
                   <div className="space-y-2.5">
                     {entries.map(([val, count], i) => {
-                      const pct = total > 0 ? Math.round((count / total) * 100) : 0
                       const barWidth = maxCount > 0 ? Math.round((count / maxCount) * 100) : 0
                       return (
                         <div key={val}>
                           <div className="flex justify-between text-xs mb-1">
                             <span className="truncate mr-2" style={{ color: 'var(--theme-text-secondary)' }}>{val}</span>
-                            <span className="shrink-0 tabular-nums" style={{ color: 'var(--theme-text-muted)', fontFamily: "'JetBrains Mono', monospace" }}>{count} ({pct}%)</span>
+                            <span className="shrink-0 tabular-nums" style={{ color: 'var(--theme-text-muted)', fontFamily: "'JetBrains Mono', monospace" }}>{count} 人</span>
                           </div>
                           <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--theme-bar-track)' }}>
                             <div
