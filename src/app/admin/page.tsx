@@ -94,13 +94,18 @@ export default function AdminPage() {
     )
   }
 
-  const questionLabels: Record<string, string> = {
-    interest: '課程興趣',
-    ai_usage: 'AI 使用頻率',
-    tools: '使用過的工具',
-    topics: '想學的主題',
-    subscribe: '月訂閱 $200 體驗 Claude Code',
-  }
+  const donutQuestions: readonly { readonly id: string; readonly label: string }[] = [
+    { id: 'interest', label: '課程興趣' },
+    { id: 'ai_usage', label: 'AI 使用頻率' },
+    { id: 'subscribe', label: '月訂閱 $200 體驗 Claude Code' },
+  ]
+
+  const barQuestions: readonly { readonly id: string; readonly label: string }[] = [
+    { id: 'tools', label: '使用過的工具' },
+    { id: 'topics', label: '想學的主題' },
+  ]
+
+  const donutColors = ['#3b82f6', '#a855f7', '#34d399', '#f59e0b', '#f43f5e', '#06b6d4', '#6366f1']
 
   const barColors = [
     'bg-blue-500',
@@ -179,38 +184,112 @@ export default function AdminPage() {
 
       {/* Stats tab */}
       {tab === 'stats' && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {Object.entries(questionLabels).map(([qId, label]) => {
-            const counts = countAnswers(qId)
-            const entries = Object.entries(counts).sort((a, b) => b[1] - a[1])
-            if (entries.length === 0) return null
-            const maxCount = Math.max(...entries.map(e => e[1]))
-            return (
-              <div key={qId} className="rounded-xl p-5" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
-                <h3 className="text-sm font-medium mb-4" style={{ color: 'var(--theme-text-tertiary)' }}>{label}</h3>
-                <div className="space-y-2.5">
-                  {entries.map(([val, count], i) => {
-                    const pct = total > 0 ? Math.round((count / total) * 100) : 0
-                    const barWidth = maxCount > 0 ? Math.round((count / maxCount) * 100) : 0
-                    return (
-                      <div key={val}>
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="truncate mr-2" style={{ color: 'var(--theme-text-secondary)' }}>{val}</span>
-                          <span className="shrink-0" style={{ color: 'var(--theme-text-muted)' }}>{count} ({pct}%)</span>
-                        </div>
-                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--theme-bar-track)' }}>
-                          <div
-                            className={`h-full rounded-full transition-all ${barColors[i % barColors.length]}`}
-                            style={{ width: `${barWidth}%` }}
-                          />
-                        </div>
+        <div className="space-y-4">
+          {/* Donut charts for single-select questions */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            {donutQuestions.map(({ id: qId, label }) => {
+              const counts = countAnswers(qId)
+              const entries = Object.entries(counts).sort((a, b) => b[1] - a[1])
+              if (entries.length === 0) return null
+              const totalAnswers = entries.reduce((sum, e) => sum + e[1], 0)
+
+              // SVG donut math
+              const radius = 52
+              const circumference = 2 * Math.PI * radius
+              let cumulativeOffset = 0
+
+              return (
+                <div key={qId} className="rounded-xl p-5" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
+                  <h3 className="text-sm font-medium mb-4" style={{ color: 'var(--theme-text-tertiary)' }}>{label}</h3>
+
+                  {/* Donut */}
+                  <div className="flex justify-center mb-4">
+                    <div className="relative w-32 h-32">
+                      <svg viewBox="0 0 128 128" className="w-full h-full -rotate-90">
+                        {entries.map(([, count], i) => {
+                          const pct = totalAnswers > 0 ? count / totalAnswers : 0
+                          const dashLength = pct * circumference
+                          const gap = circumference - dashLength
+                          const offset = cumulativeOffset
+                          cumulativeOffset += dashLength
+                          return (
+                            <circle
+                              key={i}
+                              cx="64" cy="64" r={radius}
+                              fill="none"
+                              stroke={donutColors[i % donutColors.length]}
+                              strokeWidth="18"
+                              strokeDasharray={`${dashLength} ${gap}`}
+                              strokeDashoffset={-offset}
+                              strokeLinecap="butt"
+                              className="transition-all duration-500"
+                            />
+                          )
+                        })}
+                        {/* Inner track */}
+                        <circle cx="64" cy="64" r={radius} fill="none" stroke="var(--theme-bar-track)" strokeWidth="18" className="-z-10" style={{ zIndex: -1 }} />
+                      </svg>
+                      {/* Center label */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-2xl font-bold" style={{ color: 'var(--theme-text)', fontFamily: "'JetBrains Mono', monospace" }}>{totalAnswers}</span>
+                        <span className="text-[10px]" style={{ color: 'var(--theme-text-muted)' }}>回覆</span>
                       </div>
-                    )
-                  })}
+                    </div>
+                  </div>
+
+                  {/* Legend */}
+                  <div className="space-y-1.5">
+                    {entries.map(([val, count], i) => {
+                      const pct = totalAnswers > 0 ? Math.round((count / totalAnswers) * 100) : 0
+                      return (
+                        <div key={val} className="flex items-center gap-2 text-xs">
+                          <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: donutColors[i % donutColors.length] }} />
+                          <span className="truncate flex-1" style={{ color: 'var(--theme-text-secondary)' }}>{val}</span>
+                          <span className="shrink-0 tabular-nums" style={{ color: 'var(--theme-text-muted)', fontFamily: "'JetBrains Mono', monospace" }}>{pct}%</span>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
+
+          {/* Bar charts for multi-select questions */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            {barQuestions.map(({ id: qId, label }) => {
+              const counts = countAnswers(qId)
+              const entries = Object.entries(counts).sort((a, b) => b[1] - a[1])
+              if (entries.length === 0) return null
+              const maxCount = Math.max(...entries.map(e => e[1]))
+              return (
+                <div key={qId} className="rounded-xl p-5" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
+                  <h3 className="text-sm font-medium mb-1" style={{ color: 'var(--theme-text-tertiary)' }}>{label}</h3>
+                  <p className="text-[10px] mb-4" style={{ color: 'var(--theme-text-faint)' }}>可複選，百分比以總人數 {total} 為分母</p>
+                  <div className="space-y-2.5">
+                    {entries.map(([val, count], i) => {
+                      const pct = total > 0 ? Math.round((count / total) * 100) : 0
+                      const barWidth = maxCount > 0 ? Math.round((count / maxCount) * 100) : 0
+                      return (
+                        <div key={val}>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="truncate mr-2" style={{ color: 'var(--theme-text-secondary)' }}>{val}</span>
+                            <span className="shrink-0 tabular-nums" style={{ color: 'var(--theme-text-muted)', fontFamily: "'JetBrains Mono', monospace" }}>{count} ({pct}%)</span>
+                          </div>
+                          <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--theme-bar-track)' }}>
+                            <div
+                              className={`h-full rounded-full transition-all duration-500 ${barColors[i % barColors.length]}`}
+                              style={{ width: `${barWidth}%` }}
+                            />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
 
