@@ -4,19 +4,19 @@ import ThemeProvider from '@/components/ThemeProvider'
 import ThemeToggle from '@/components/ThemeToggle'
 
 export const metadata: Metadata = {
-  title: '填問卷送 $200 折扣券 — 使用 Claude Code 開發',
-  description: '填寫課程興趣問卷，立即領取 NT$200 折扣碼 BOT200！html_cat 切版職人帶你用 Claude Code 打造開發工作流。',
+  title: '線上問卷平台 — 快速建立與填寫問卷',
+  description: '簡單好用的線上問卷工具，輕鬆建立調查表單、收集回饋與分析結果。',
   openGraph: {
-    title: '🎟️ 填問卷送 $200 折扣券 — Claude Code 開發課程',
-    description: '填寫問卷立即領取 NT$200 折扣碼！html_cat 帶你用 Claude Code 打造高效開發工作流。',
-    siteName: 'html_cat 課程問卷',
+    title: '線上問卷平台 — 快速建立與填寫問卷',
+    description: '簡單好用的線上問卷工具，輕鬆建立調查表單、收集回饋與分析結果。',
+    siteName: '線上問卷平台',
     type: 'website',
     url: 'https://survey.isnowfriend.com',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '🎟️ 填問卷送 $200 折扣券 — Claude Code 開發課程',
-    description: '填寫問卷立即領取 NT$200 折扣碼！',
+    title: '線上問卷平台 — 快速建立與填寫問卷',
+    description: '簡單好用的線上問卷工具，輕鬆建立調查表單、收集回饋與分析結果。',
   },
 }
 
