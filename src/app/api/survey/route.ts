@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { addResponse, hasSubmitted } from '@/lib/db'
+import { getSurveyConfig } from '@/lib/survey-config'
 import { randomUUID } from 'node:crypto'
 import { z } from 'zod'
 
 const submitSchema = z.object({
-  threadsAccount: z.string().min(1, '請輸入 Threads 帳號'),
-  email: z.string().email('Email 格式不正確'),
+  slug: z.string().min(1),
+  identity: z.record(z.string()),
   answers: z.record(z.union([z.string(), z.array(z.string())])),
 })
 
@@ -18,17 +19,34 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: msg }, { status: 400 })
   }
 
-  const { threadsAccount, email, answers } = parsed.data
-  const normalizedEmail = email.toLowerCase()
+  const { slug, identity, answers } = parsed.data
 
-  if (hasSubmitted(normalizedEmail)) {
-    return NextResponse.json({ error: '這個 Email 已經填過囉！' }, { status: 409 })
+  const config = getSurveyConfig(slug)
+  if (!config) {
+    return NextResponse.json({ error: '找不到問卷' }, { status: 404 })
+  }
+
+  for (const field of config.identityFields) {
+    if (field.required && !identity[field.key]?.trim()) {
+      return NextResponse.json({ error: `請輸入${field.label}` }, { status: 400 })
+    }
+    if (field.type === 'email' && identity[field.key]) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(identity[field.key])) {
+        return NextResponse.json({ error: `${field.label} 格式不正確` }, { status: 400 })
+      }
+    }
+  }
+
+  const dedupValue = identity[config.deduplicateBy]
+  if (dedupValue && hasSubmitted(slug, config.deduplicateBy, dedupValue)) {
+    return NextResponse.json({ error: config.duplicateMessage }, { status: 409 })
   }
 
   addResponse({
     id: randomUUID(),
-    email: normalizedEmail,
-    name: threadsAccount,
+    slug,
+    identity,
     answers,
     submittedAt: new Date().toISOString(),
   })
@@ -37,9 +55,11 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const email = req.nextUrl.searchParams.get('email')
-  if (!email) {
+  const slug = req.nextUrl.searchParams.get('slug')
+  const field = req.nextUrl.searchParams.get('field')
+  const value = req.nextUrl.searchParams.get('value')
+  if (!slug || !field || !value) {
     return NextResponse.json({ submitted: false })
   }
-  return NextResponse.json({ submitted: hasSubmitted(email.toLowerCase()) })
+  return NextResponse.json({ submitted: hasSubmitted(slug, field, value) })
 }

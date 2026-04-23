@@ -13,7 +13,7 @@ interface Props {
 export default function SurveyPage({ config }: Props) {
   const [submitted, setSubmitted] = useState(false)
 
-  async function handleSubmit(data: { threadsAccount: string; email: string; answers: Record<string, string | string[]> }) {
+  async function handleSubmit(data: { identity: Record<string, string>; answers: Record<string, string | string[]> }) {
     const res = await fetch('/api/survey', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -1,75 +1,21 @@
 'use client'
 
 import { useState } from 'react'
-
-interface Question {
-  readonly id: string
-  readonly label: string
-  readonly type: 'radio' | 'checkbox' | 'text'
-  readonly options?: readonly string[]
-  readonly required?: boolean
-}
-
-const QUESTIONS: readonly Question[] = [
-  {
-    id: 'interest',
-    label: '你對「用 AI 打造個人開發工作流」這門課有興趣嗎？',
-    type: 'radio',
-    options: ['非常有興趣', '有點興趣', '還好', '沒興趣'],
-    required: true,
-  },
-  {
-    id: 'ai_usage',
-    label: '你目前使用 AI 輔助開發的頻率？',
-    type: 'radio',
-    options: ['每天都用', '一週幾次', '偶爾用', '還沒用過'],
-    required: true,
-  },
-  {
-    id: 'tools',
-    label: '你目前用過哪些 AI 開發工具？（可多選）',
-    type: 'checkbox',
-    options: ['ChatGPT', 'Claude', 'GitHub Copilot', 'Cursor', 'Claude Code CLI', '其他'],
-    required: true,
-  },
-  {
-    id: 'topics',
-    label: '你最想學哪些主題？（可多選）',
-    type: 'checkbox',
-    options: [
-      'Telegram Bot 開發',
-      'Claude Code CLI 進階用法',
-      '多機協作（Remote Pairing）',
-      '語音輸入開發流程',
-      'Plugin 系統設計',
-      'AI Directive 系統',
-      '自動化部署',
-    ],
-    required: true,
-  },
-  {
-    id: 'subscribe',
-    label: '如果每月 $200 就能訂閱使用 Claude Code，直接上手體驗，你會有興趣嗎？',
-    type: 'radio',
-    options: ['非常有興趣', '會想試試看', '再觀望', '沒興趣'],
-    required: true,
-  },
-  {
-    id: 'feedback',
-    label: '其他想法或建議（選填）',
-    type: 'text',
-  },
-]
+import type { SurveyConfig } from '@/lib/types'
 
 interface Props {
-  readonly onSubmit: (data: { threadsAccount: string; email: string; answers: Record<string, string | string[]> }) => Promise<void>
+  readonly config: SurveyConfig
+  readonly onSubmit: (data: { identity: Record<string, string>; answers: Record<string, string | string[]> }) => Promise<void>
 }
 
-export default function SurveyForm({ onSubmit }: Props) {
-  const [threadsAccount, setThreadsAccount] = useState('')
-  const [email, setEmail] = useState('')
+export default function SurveyForm({ config, onSubmit }: Props) {
+  const [identity, setIdentity] = useState<Record<string, string>>({})
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({})
   const [submitting, setSubmitting] = useState(false)
+
+  function handleIdentity(key: string, value: string) {
+    setIdentity(prev => ({ ...prev, [key]: value }))
+  }
 
   function handleRadio(qId: string, value: string) {
     setAnswers(prev => ({ ...prev, [qId]: value }))
@@ -89,21 +35,28 @@ export default function SurveyForm({ onSubmit }: Props) {
     setAnswers(prev => ({ ...prev, [qId]: value }))
   }
 
+  function handleConfirm(qId: string, checked: boolean) {
+    setAnswers(prev => ({ ...prev, [qId]: checked ? '是' : '' }))
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
-    if (!threadsAccount.trim()) {
-      alert('請輸入你的 Threads 帳號')
-      return
+    for (const field of config.identityFields) {
+      if (field.required && !identity[field.key]?.trim()) {
+        alert(`請輸入${field.label}`)
+        return
+      }
+      if (field.type === 'email' && identity[field.key]) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(identity[field.key])) {
+          alert(`請輸入有效的 ${field.label}`)
+          return
+        }
+      }
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      alert('請輸入有效的 Email')
-      return
-    }
-
-    for (const q of QUESTIONS) {
+    for (const q of config.questions) {
       if (!q.required) continue
       const val = answers[q.id]
       if (!val || (Array.isArray(val) && val.length === 0)) {
@@ -114,7 +67,13 @@ export default function SurveyForm({ onSubmit }: Props) {
 
     setSubmitting(true)
     try {
-      await onSubmit({ threadsAccount: threadsAccount.trim(), email: email.trim().toLowerCase(), answers })
+      const trimmedIdentity = Object.fromEntries(
+        Object.entries(identity).map(([k, v]) => {
+          const field = config.identityFields.find(f => f.key === k)
+          return [k, field?.type === 'email' ? v.trim().toLowerCase() : v.trim()]
+        })
+      )
+      await onSubmit({ identity: trimmedIdentity, answers })
     } finally {
       setSubmitting(false)
     }
@@ -124,40 +83,33 @@ export default function SurveyForm({ onSubmit }: Props) {
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Identity */}
       <div className="rounded-2xl p-5 sm:p-6 space-y-4" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
-        <p className="text-sm font-medium tracking-wide" style={{ color: 'var(--theme-text-tertiary)' }}>基本資料</p>
+        <p className="text-sm font-medium tracking-wide" style={{ color: 'var(--theme-text-tertiary)' }}>
+          {config.identitySectionLabel ?? '基本資料'}
+        </p>
 
         <div className="space-y-3">
-          <div>
-            <label className="block text-xs mb-1.5" style={{ color: 'var(--theme-text-muted)' }}>
-              Threads 帳號 <span className="text-red-400/70">*</span>
-            </label>
-            <input
-              type="text"
-              value={threadsAccount}
-              onChange={e => setThreadsAccount(e.target.value)}
-              placeholder="@your_account"
-              className="w-full themed-input rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent/40 transition-all"
-            />
-            <p className="text-[11px] mt-1.5 pl-1" style={{ color: 'var(--theme-text-faint)' }}>方便後續聯繫與私訊通知用</p>
-          </div>
-          <div>
-            <label className="block text-xs mb-1.5" style={{ color: 'var(--theme-text-muted)' }}>
-              Email <span className="text-red-400/70">*</span>
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              className="w-full themed-input rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent/40 transition-all"
-            />
-            <p className="text-[11px] mt-1.5 pl-1" style={{ color: 'var(--theme-text-faint)' }}>用於寄送折扣碼與課程上線通知</p>
-          </div>
+          {config.identityFields.map(field => (
+            <div key={field.key}>
+              <label className="block text-xs mb-1.5" style={{ color: 'var(--theme-text-muted)' }}>
+                {field.label} {field.required && <span className="text-red-400/70">*</span>}
+              </label>
+              <input
+                type={field.type}
+                value={identity[field.key] ?? ''}
+                onChange={e => handleIdentity(field.key, e.target.value)}
+                placeholder={field.placeholder}
+                className="w-full themed-input rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent/40 transition-all"
+              />
+              {field.hint && (
+                <p className="text-[11px] mt-1.5 pl-1" style={{ color: 'var(--theme-text-faint)' }}>{field.hint}</p>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Questions */}
-      {QUESTIONS.map((q, idx) => (
+      {config.questions.map((q, idx) => (
         <div
           key={q.id}
           className="rounded-2xl p-5 sm:p-6"
@@ -226,10 +178,27 @@ export default function SurveyForm({ onSubmit }: Props) {
             <textarea
               value={(answers[q.id] as string) ?? ''}
               onChange={e => handleText(q.id, e.target.value)}
-              placeholder="請輸入..."
+              placeholder={q.placeholder ?? '請輸入...'}
               rows={3}
               className="w-full themed-input rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent/40 transition-all resize-none"
             />
+          )}
+
+          {q.type === 'confirm' && (
+            <label
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl cursor-pointer transition-all text-sm"
+              style={{
+                background: answers[q.id] === '是' ? 'var(--theme-selected-bg)' : 'transparent',
+                color: answers[q.id] === '是' ? 'var(--theme-text-secondary)' : 'var(--theme-text-tertiary)',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={answers[q.id] === '是'}
+                onChange={e => handleConfirm(q.id, e.target.checked)}
+              />
+              <span>確認</span>
+            </label>
           )}
         </div>
       ))}
@@ -239,7 +208,7 @@ export default function SurveyForm({ onSubmit }: Props) {
         disabled={submitting}
         className="w-full py-3.5 bg-accent hover:bg-accent/90 disabled:bg-accent/40 rounded-xl text-sm font-semibold transition-all active:scale-[0.99] text-white"
       >
-        {submitting ? '提交中...' : '送出問卷，領取折扣碼'}
+        {submitting ? '提交中...' : config.submitLabel}
       </button>
     </form>
   )
