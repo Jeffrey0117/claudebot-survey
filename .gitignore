@@ -5,3 +5,7 @@ data/
 .env.local
 *.tsbuildinfo
 next-env.d.ts
+.pm2-ecosystem.json
+.pm2-start.cjs
+.pkg-hash
+.deploy-state.json
