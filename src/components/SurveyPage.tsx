@@ -34,7 +34,16 @@ export default function SurveyPage({ config }: Props) {
   return (
     <main className="min-h-screen flex flex-col items-center px-4 py-8 sm:py-14">
       {/* Hero */}
-      <div className="text-center mb-8 max-w-xl">
+      <div className="text-center mb-8 max-w-xl w-full">
+        {config.heroImage && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={config.heroImage}
+            alt=""
+            className="w-full h-auto rounded-2xl mb-6"
+            style={{ border: '1px solid var(--theme-border)' }}
+          />
+        )}
         {config.badge && (
           <div className="inline-flex items-center gap-2 bg-mint-soft text-mint rounded-full px-3.5 py-1 text-xs font-medium mb-5 border border-mint/15">
             {config.badge.icon && <span>{config.badge.icon}</span>}

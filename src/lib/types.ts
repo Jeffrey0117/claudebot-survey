@@ -26,6 +26,8 @@ export interface SurveyConfig {
   readonly slug: string
   readonly title: string | readonly string[]
   readonly subtitle?: string
+  /** 主視覺圖網址(hero 區塊顯示,選填) */
+  readonly heroImage?: string
   readonly badge?: {
     readonly icon?: string
     readonly text: string
