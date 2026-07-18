@@ -6,19 +6,44 @@ interface SurveyResponse {
   readonly id: string
   readonly email: string
   readonly name: string
+  /** 新制回覆:身分欄位收在 identity(舊制 email/name 在頂層) */
+  readonly identity?: Record<string, string>
   readonly answers: Record<string, string | string[]>
   readonly submittedAt: string
 }
+
+interface SurveyMeta {
+  readonly slug: string
+  readonly title: string
+}
+
+// 舊儀表板(donut/bar 題目 ID 寫死)只適用最初的 Threads 課程調查;其餘問卷走通用檢視
+const LEGACY_SLUG = 'home'
 
 export default function AdminPage() {
   const [password, setPassword] = useState('')
   const [authed, setAuthed] = useState(false)
   const [responses, setResponses] = useState<SurveyResponse[]>([])
   const [total, setTotal] = useState(0)
+  const [surveys, setSurveys] = useState<SurveyMeta[]>([])
+  const [slug, setSlug] = useState('summer-flip')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [tab, setTab] = useState<'stats' | 'contacts' | 'feedback'>('stats')
   const [copied, setCopied] = useState('')
+
+  async function fetchResponses(pw: string, s: string) {
+    const res = await fetch('/api/admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw, slug: s }),
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error ?? '載入失敗')
+    setResponses(data.responses)
+    setTotal(data.total)
+    setSurveys(data.surveys ?? [])
+  }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -26,28 +51,29 @@ export default function AdminPage() {
     setError('')
 
     try {
-      const res = await fetch('/api/admin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      })
-      const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.error ?? '登入失敗')
-        setLoading(false)
-        return
-      }
-
-      setResponses(data.responses)
-      setTotal(data.total)
+      await fetchResponses(password, slug)
       setAuthed(true)
-    } catch {
-      setError('連線失敗')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '連線失敗')
     } finally {
       setLoading(false)
     }
   }
+
+  async function switchSurvey(s: string) {
+    setSlug(s)
+    setLoading(true)
+    try {
+      await fetchResponses(password, s)
+    } catch {
+      /* 切換失敗維持原資料 */
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 新舊回覆格式統一取值
+  const idOf = (r: SurveyResponse, key: string) => r.identity?.[key] ?? (r as any)[key] ?? ''
 
   function countAnswers(questionId: string): Record<string, number> {
     const counts: Record<string, number> = {}
@@ -123,13 +149,14 @@ export default function AdminPage() {
     { key: 'feedback' as const, label: '文字回饋' },
   ]
 
-  const allEmails = responses.map(r => r.email).join('\n')
-  const allThreads = responses.map(r => r.name).join('\n')
+  const allEmails = responses.map(r => idOf(r, 'email')).filter(Boolean).join('\n')
+  const allThreads = responses.map(r => idOf(r, 'name')).filter(Boolean).join('\n')
+  const isLegacy = slug === LEGACY_SLUG
 
   return (
     <main className="min-h-screen px-4 py-8 sm:py-12 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex items-end justify-between mb-6">
+      <div className="flex items-end justify-between mb-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: 'var(--theme-text)' }}>問卷後台</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--theme-text-muted)' }}>共 {total} 份回覆</p>
@@ -139,6 +166,71 @@ export default function AdminPage() {
         </div>
       </div>
 
+      {/* 問卷切換器 */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {surveys.map(s => (
+          <button
+            key={s.slug}
+            onClick={() => switchSurvey(s.slug)}
+            disabled={loading}
+            className="text-xs rounded-lg px-3 py-2 transition-all"
+            style={slug === s.slug
+              ? { background: 'var(--theme-surface-hover)', border: '1px solid var(--theme-border)', color: 'var(--theme-text)', fontWeight: 600 }
+              : { background: 'var(--theme-surface)', border: '1px solid var(--theme-border)', color: 'var(--theme-text-muted)' }
+            }
+          >
+            {s.title}
+          </button>
+        ))}
+      </div>
+
+      {/* 通用檢視(非舊儀表板問卷):名單+答案+複製 Email */}
+      {!isLegacy && (
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <button
+              onClick={() => copyText(allEmails, 'email')}
+              className="text-xs rounded-lg px-3 py-2 transition-all"
+              style={{ background: 'var(--theme-surface)', border: '1px solid var(--theme-border)', color: 'var(--theme-text-tertiary)' }}
+            >
+              {copied === 'email' ? '已複製!' : `複製全部 Email (${responses.length})`}
+            </button>
+          </div>
+          <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
+            {responses.length === 0 ? (
+              <div className="px-4 py-8 text-center text-sm" style={{ color: 'var(--theme-text-faint)' }}>目前沒有回覆</div>
+            ) : (
+              responses.map((r, i) => (
+                <details key={r.id} style={{ borderBottom: '1px solid var(--theme-border)' }}>
+                  <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none">
+                    <span className="text-xs w-6 shrink-0 text-right" style={{ color: 'var(--theme-text-faint)' }}>{i + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium truncate block" style={{ color: 'var(--theme-text-secondary)' }}>
+                        {idOf(r, 'name') || '(未填)'}
+                        {idOf(r, 'social') && <span className="ml-2 text-xs" style={{ color: 'var(--theme-text-muted)' }}>{idOf(r, 'social')}</span>}
+                      </span>
+                      <p className="text-xs truncate" style={{ color: 'var(--theme-text-muted)' }}>{idOf(r, 'email')}</p>
+                    </div>
+                    <span className="text-[10px] shrink-0" style={{ color: 'var(--theme-text-faint)' }}>
+                      {new Date(r.submittedAt).toLocaleString('zh-TW', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </summary>
+                  <div className="px-4 pb-4 pt-1 space-y-2 text-sm" style={{ background: 'var(--theme-surface-hover)' }}>
+                    {Object.entries(r.answers).map(([k, v]) => (
+                      <div key={k}>
+                        <p className="text-[10px] uppercase tracking-wide" style={{ color: 'var(--theme-text-faint)' }}>{k}</p>
+                        <p style={{ color: 'var(--theme-text-secondary)' }}>{Array.isArray(v) ? v.join('、') : v}</p>
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {isLegacy && (<>
       {/* Quick stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <div className="rounded-xl p-4 text-center" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
@@ -369,6 +461,7 @@ export default function AdminPage() {
           )}
         </div>
       )}
+      </>)}
 
       {/* Raw data */}
       <details className="mt-8 rounded-xl p-5" style={{ border: '1px solid var(--theme-border)', background: 'var(--theme-surface)' }}>
