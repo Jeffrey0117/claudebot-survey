@@ -132,6 +132,14 @@ export default function SurveyPage({ config }: Props) {
                     ))}
                   </p>
                 )}
+                {config.successLink && (
+                  <a
+                    href={config.successLink.href}
+                    className="inline-block w-full sm:w-auto px-8 py-3.5 bg-accent hover:bg-accent/90 rounded-xl text-sm font-semibold text-white transition-all active:scale-[0.99]"
+                  >
+                    {config.successLink.text}
+                  </a>
+                )}
               </div>
             )}
 

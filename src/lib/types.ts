@@ -44,6 +44,11 @@ export interface SurveyConfig {
     readonly title: string
     readonly body: string
   }
+  /** 成功頁的行動按鈕(填完問卷直接給下一步連結,像 Google 表單的確認訊息) */
+  readonly successLink?: {
+    readonly text: string
+    readonly href: string
+  }
   readonly showAuthorCard?: boolean
   readonly coupon?: {
     readonly enabled: boolean
